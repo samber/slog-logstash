@@ -12,6 +12,14 @@
 
 A [Logstash](https://www.elastic.co/logstash/)) Handler for [slog](https://pkg.go.dev/golang.org/x/exp/slog) Go library.
 
+**See also:**
+
+- [slog-multi](https://github.com/samber/slog-multi): workflows of `slog` handlers (pipeline, fanout)
+- [slog-datadog](https://github.com/samber/slog-datadog): A `slog` handler for `Datadog`
+- [slog-slack](https://github.com/samber/slog-slack): A `slog` handler for `Slack`
+- [slog-loki](https://github.com/samber/slog-loki): A `slog` handler for `Loki`
+- [slog-sentry](https://github.com/samber/slog-sentry): A `slog` handler for `Sentry`
+
 ## 🚀 Install
 
 ```sh
