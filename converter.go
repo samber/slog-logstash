@@ -12,8 +12,8 @@ type Converter func(loggerAttr []slog.Attr, record *slog.Record) map[string]any
 
 func DefaultConverter(loggerAttr []slog.Attr, record *slog.Record) map[string]any {
 	log := map[string]any{
-		"@timestamp": record.Time,
-		"level":      record.Level,
+		"@timestamp": record.Time.UTC(),
+		"level":      record.Level.String(),
 		"message":    record.Message,
 	}
 
