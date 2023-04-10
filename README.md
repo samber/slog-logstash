@@ -10,7 +10,7 @@
 [![Contributors](https://img.shields.io/github/contributors/samber/slog-logstash)](https://github.com/samber/slog-logstash/graphs/contributors)
 [![License](https://img.shields.io/github/license/samber/slog-logstash)](./LICENSE)
 
-A [Logstash](https://www.elastic.co/logstash/)) Handler for [slog](https://pkg.go.dev/golang.org/x/exp/slog) Go library.
+A [Logstash](https://www.elastic.co/logstash/) Handler for [slog](https://pkg.go.dev/golang.org/x/exp/slog) Go library.
 
 **See also:**
 
@@ -19,6 +19,8 @@ A [Logstash](https://www.elastic.co/logstash/)) Handler for [slog](https://pkg.g
 - [slog-slack](https://github.com/samber/slog-slack): A `slog` handler for `Slack`
 - [slog-loki](https://github.com/samber/slog-loki): A `slog` handler for `Loki`
 - [slog-sentry](https://github.com/samber/slog-sentry): A `slog` handler for `Sentry`
+- [slog-fluentd](https://github.com/samber/slog-fluentd): A `slog` handler for `Fluentd`
+- [slog-syslog](https://github.com/samber/slog-syslog): A `slog` handler for `Syslog`
 
 ## 🚀 Install
 
@@ -109,7 +111,6 @@ Output:
     "extra":{
         "environment":"dev",
         "release":"v1.0.0",
-        "category":"sql",
         "category":"sql",
         "query.statement":"SELECT COUNT(*) FROM users;",
         "query.duration": "1s"
