@@ -4,5 +4,6 @@ go 1.20
 
 require (
 	github.com/netbrain/goautosocket v0.0.0-20150624145746-bef85f0aef40
+	go.uber.org/goleak v1.2.1
 	golang.org/x/exp v0.0.0-20230425010034-47ecfdc1ba53
 )
