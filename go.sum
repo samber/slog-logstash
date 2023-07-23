@@ -1,7 +1,7 @@
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
-github.com/netbrain/goautosocket v0.0.0-20150624145746-bef85f0aef40 h1:bOeCk5udqJgLIrCzxS5nZcufOTHtu7ap5bYsqx4w4/I=
-github.com/netbrain/goautosocket v0.0.0-20150624145746-bef85f0aef40/go.mod h1:o7i/4orMnh/ZmJef4SeqvqHo2ZjO++jU9e03S9725r8=
 github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=
+github.com/samber/go-tcp-pool v1.0.2 h1:+kDgT4XMAF7Z2hOnQAgbjFAiS1Y8WWORa3KdEokCafg=
+github.com/samber/go-tcp-pool v1.0.2/go.mod h1:lrarBR+F0mOArJGgHe/pWFxHtMYmGsg5DxD1QEYoCWs=
 github.com/samber/lo v1.38.1 h1:j2XEAqXKb09Am4ebOg31SpvzUTTs6EN3VfgeLUhPdXM=
 github.com/samber/lo v1.38.1/go.mod h1:+m/ZKRl6ClXCE2Lgf3MsQlWfh4bn1bz6CXEOxnEXnEA=
 github.com/stretchr/testify v1.8.0 h1:pSgiaMZlXftHpm5L7V1+rVB+AZJydKsMxsQBIJw4PKk=

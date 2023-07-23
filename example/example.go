@@ -5,17 +5,18 @@ import (
 	"log"
 	"time"
 
-	gas "github.com/netbrain/goautosocket"
-	sloglogstash "github.com/samber/slog-logtsash"
+	pool "github.com/samber/go-tcp-pool"
+	sloglogstash "github.com/samber/slog-logstash"
 	"golang.org/x/exp/slog"
 )
 
 func main() {
-	// ncat -l 9999 -k
-	conn, err := gas.Dial("tcp", "localhost:9999")
+	conn, err := pool.Dial("tcp", "localhost:9999")
 	if err != nil {
 		log.Fatal(err)
 	}
+
+	conn.SetPoolSize(10)
 
 	logger := slog.New(sloglogstash.Option{Level: slog.LevelDebug, Conn: conn}.NewLogstashHandler())
 	logger = logger.With("release", "v1.0.0")

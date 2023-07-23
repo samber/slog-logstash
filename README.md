@@ -72,14 +72,14 @@ Attributes will be injected in log payload.
 
 ```go
 import (
-    gas "github.com/netbrain/goautosocket"
-	sloglogstash "github.com/samber/slog-logtsash"
-	"golang.org/x/exp/slog"
+    pool "github.com/samber/go-tcp-pool"
+    sloglogstash "github.com/samber/slog-logstash"
+    "golang.org/x/exp/slog"
 )
 
 func main() {
     // ncat -l 9999 -k
-    conn, err := gas.Dial("tcp", "localhost:9999")
+    conn, err := pool.Dial("tcp", "localhost:9999")
     if err != nil {
         log.Fatal(err)
     }
