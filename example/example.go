@@ -5,9 +5,10 @@ import (
 	"log"
 	"time"
 
+	"log/slog"
+
 	pool "github.com/samber/go-tcp-pool"
 	sloglogstash "github.com/samber/slog-logstash"
-	"golang.org/x/exp/slog"
 )
 
 func main() {
@@ -16,7 +17,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	conn.SetPoolSize(10)
+	_ = conn.SetPoolSize(10)
 
 	logger := slog.New(sloglogstash.Option{Level: slog.LevelDebug, Conn: conn}.NewLogstashHandler())
 	logger = logger.With("release", "v1.0.0")

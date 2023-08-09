@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"net"
 
-	"golang.org/x/exp/slog"
+	"log/slog"
 )
 
 type Option struct {
