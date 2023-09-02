@@ -35,6 +35,8 @@ func (o Option) NewLogstashHandler() slog.Handler {
 	}
 }
 
+var _ slog.Handler = (*LogstashHandler)(nil)
+
 type LogstashHandler struct {
 	option Option
 	attrs  []slog.Attr
