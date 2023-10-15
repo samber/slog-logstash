@@ -6,6 +6,8 @@ import (
 	"net"
 
 	"log/slog"
+
+	slogcommon "github.com/samber/slog-common"
 )
 
 type Option struct {
@@ -17,6 +19,10 @@ type Option struct {
 
 	// optional: customize json payload builder
 	Converter Converter
+
+	// optional: see slog.HandlerOptions
+	AddSource   bool
+	ReplaceAttr func(groups []string, a slog.Attr) slog.Attr
 }
 
 func (o Option) NewLogstashHandler() slog.Handler {
@@ -53,7 +59,7 @@ func (h *LogstashHandler) Handle(ctx context.Context, record slog.Record) error 
 		converter = h.option.Converter
 	}
 
-	message := converter(h.attrs, &record)
+	message := converter(h.option.AddSource, h.option.ReplaceAttr, h.attrs, h.groups, &record)
 
 	bytes, err := json.Marshal(message)
 	if err != nil {
@@ -68,7 +74,7 @@ func (h *LogstashHandler) Handle(ctx context.Context, record slog.Record) error 
 func (h *LogstashHandler) WithAttrs(attrs []slog.Attr) slog.Handler {
 	return &LogstashHandler{
 		option: h.option,
-		attrs:  appendAttrsToGroup(h.groups, h.attrs, attrs),
+		attrs:  slogcommon.AppendAttrsToGroup(h.groups, h.attrs, attrs...),
 		groups: h.groups,
 	}
 }
