@@ -43,16 +43,16 @@ A [Logstash](https://www.elastic.co/logstash/) Handler for [slog](https://pkg.go
 ## 🚀 Install
 
 ```sh
-go get github.com/samber/slog-logstash
+go get github.com/samber/slog-logstash/v2
 ```
 
 **Compatibility**: go >= 1.21
 
-No breaking changes will be made to exported APIs before v2.0.0.
+No breaking changes will be made to exported APIs before v3.0.0.
 
 ## 💡 Usage
 
-GoDoc: [https://pkg.go.dev/github.com/samber/slog-logstash](https://pkg.go.dev/github.com/samber/slog-logstash)
+GoDoc: [https://pkg.go.dev/github.com/samber/slog-logstash/v2](https://pkg.go.dev/github.com/samber/slog-logstash/v2)
 
 ### Handler options
 
@@ -88,7 +88,7 @@ sloglogstash.ErrorKeys = []string{"error", "err"}
 ```go
 import (
     pool "github.com/samber/go-tcp-pool"
-    sloglogstash "github.com/samber/slog-logstash"
+    sloglogstash "github.com/samber/slog-logstash/v2"
     "log/slog"
 )
 

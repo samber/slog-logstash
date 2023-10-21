@@ -1,4 +1,4 @@
-module github.com/samber/slog-logstash
+module github.com/samber/slog-logstash/v2
 
 go 1.21
 

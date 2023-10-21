@@ -8,7 +8,7 @@ import (
 	"log/slog"
 
 	pool "github.com/samber/go-tcp-pool"
-	sloglogstash "github.com/samber/slog-logstash"
+	sloglogstash "github.com/samber/slog-logstash/v2"
 )
 
 func main() {
