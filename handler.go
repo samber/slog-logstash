@@ -66,7 +66,9 @@ func (h *LogstashHandler) Handle(ctx context.Context, record slog.Record) error 
 		return err
 	}
 
-	_, err = h.option.Conn.Write(append(bytes, byte('\n')))
+	go func() {
+		_, _ = h.option.Conn.Write(append(bytes, byte('\n')))
+	}()
 
 	return err
 }
