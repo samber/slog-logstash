@@ -19,6 +19,8 @@ type Option struct {
 
 	// optional: customize json payload builder
 	Converter Converter
+	// optional: custom marshaler
+	Marshaler func(v any) ([]byte, error)
 
 	// optional: see slog.HandlerOptions
 	AddSource   bool
@@ -32,6 +34,14 @@ func (o Option) NewLogstashHandler() slog.Handler {
 
 	if o.Conn == nil {
 		panic("missing logstash connections")
+	}
+
+	if o.Converter == nil {
+		o.Converter = DefaultConverter
+	}
+
+	if o.Marshaler == nil {
+		o.Marshaler = json.Marshal
 	}
 
 	return &LogstashHandler{
@@ -54,14 +64,9 @@ func (h *LogstashHandler) Enabled(_ context.Context, level slog.Level) bool {
 }
 
 func (h *LogstashHandler) Handle(ctx context.Context, record slog.Record) error {
-	converter := DefaultConverter
-	if h.option.Converter != nil {
-		converter = h.option.Converter
-	}
+	message := h.option.Converter(h.option.AddSource, h.option.ReplaceAttr, h.attrs, h.groups, &record)
 
-	message := converter(h.option.AddSource, h.option.ReplaceAttr, h.attrs, h.groups, &record)
-
-	bytes, err := json.Marshal(message)
+	bytes, err := h.option.Marshaler(message)
 	if err != nil {
 		return err
 	}
