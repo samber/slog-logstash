@@ -1,4 +1,4 @@
 package sloglogstash
 
 const name = "samber/slog-logstash"
-const version = "VERSION" // replaced by .github/workflows/release.yml
+const version = "v2.3.1" // replaced by .github/workflows/release.yml
