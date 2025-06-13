@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"net"
+	"sync"
 
 	"log/slog"
 
@@ -59,6 +60,8 @@ func (o Option) NewLogstashHandler() slog.Handler {
 
 var _ slog.Handler = (*LogstashHandler)(nil)
 
+var wg sync.WaitGroup
+
 type LogstashHandler struct {
 	option Option
 	attrs  []slog.Attr
@@ -78,7 +81,9 @@ func (h *LogstashHandler) Handle(ctx context.Context, record slog.Record) error 
 		return err
 	}
 
+	wg.Add(1)
 	go func() {
+		defer wg.Done()
 		_, _ = h.option.Conn.Write(append(bytes, byte('\n')))
 	}()
 
@@ -104,4 +109,9 @@ func (h *LogstashHandler) WithGroup(name string) slog.Handler {
 		attrs:  h.attrs,
 		groups: append(h.groups, name),
 	}
+}
+
+// Wait for logging goroutines to finish
+func WaitForGoroutines() {
+	wg.Wait()
 }
