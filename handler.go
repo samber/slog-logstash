@@ -60,12 +60,11 @@ func (o Option) NewLogstashHandler() slog.Handler {
 
 var _ slog.Handler = (*LogstashHandler)(nil)
 
-var wg sync.WaitGroup
-
 type LogstashHandler struct {
 	option Option
 	attrs  []slog.Attr
 	groups []string
+	wg     sync.WaitGroup
 }
 
 func (h *LogstashHandler) Enabled(_ context.Context, level slog.Level) bool {
@@ -81,9 +80,9 @@ func (h *LogstashHandler) Handle(ctx context.Context, record slog.Record) error 
 		return err
 	}
 
-	wg.Add(1)
+	h.wg.Add(1)
 	go func() {
-		defer wg.Done()
+		defer h.wg.Done()
 		_, _ = h.option.Conn.Write(append(bytes, byte('\n')))
 	}()
 
@@ -112,6 +111,6 @@ func (h *LogstashHandler) WithGroup(name string) slog.Handler {
 }
 
 // Wait for logging goroutines to finish
-func WaitForGoroutines() {
-	wg.Wait()
+func (h *LogstashHandler) Flush() {
+	h.wg.Wait()
 }
