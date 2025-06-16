@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/json"
 	"net"
-	"sync"
 
 	"log/slog"
 
@@ -51,20 +50,29 @@ func (o Option) NewLogstashHandler() slog.Handler {
 		o.AttrFromContext = []func(ctx context.Context) []slog.Attr{}
 	}
 
-	return &LogstashHandler{
-		option: o,
-		attrs:  []slog.Attr{},
-		groups: []string{},
+	handler := LogstashHandler{
+		option:  o,
+		attrs:   []slog.Attr{},
+		groups:  []string{},
+		buf:     make(chan []byte, bufferSize),
+		flushed: make(chan bool),
 	}
+
+	handler.startBufferProcessing()
+
+	return &handler
 }
 
 var _ slog.Handler = (*LogstashHandler)(nil)
 
+const bufferSize = 64
+
 type LogstashHandler struct {
-	option Option
-	attrs  []slog.Attr
-	groups []string
-	wg     sync.WaitGroup
+	option  Option
+	attrs   []slog.Attr
+	groups  []string
+	buf     chan []byte
+	flushed chan bool
 }
 
 func (h *LogstashHandler) Enabled(_ context.Context, level slog.Level) bool {
@@ -80,21 +88,32 @@ func (h *LogstashHandler) Handle(ctx context.Context, record slog.Record) error 
 		return err
 	}
 
-	h.wg.Add(1)
-	go func() {
-		defer h.wg.Done()
-		_, _ = h.option.Conn.Write(append(bytes, byte('\n')))
-	}()
+	h.buf <- append(bytes, byte('\n'))
 
 	return err
 }
 
+func (h *LogstashHandler) startBufferProcessing() {
+	go func() {
+		for v := range h.buf {
+			_, _ = h.option.Conn.Write(v)
+		}
+		h.flushed <- true
+	}()
+}
+
 func (h *LogstashHandler) WithAttrs(attrs []slog.Attr) slog.Handler {
-	return &LogstashHandler{
-		option: h.option,
-		attrs:  slogcommon.AppendAttrsToGroup(h.groups, h.attrs, attrs...),
-		groups: h.groups,
+	handler := LogstashHandler{
+		option:  h.option,
+		attrs:   slogcommon.AppendAttrsToGroup(h.groups, h.attrs, attrs...),
+		groups:  h.groups,
+		buf:     make(chan []byte, bufferSize),
+		flushed: make(chan bool),
 	}
+
+	handler.startBufferProcessing()
+
+	return &handler
 }
 
 func (h *LogstashHandler) WithGroup(name string) slog.Handler {
@@ -103,14 +122,21 @@ func (h *LogstashHandler) WithGroup(name string) slog.Handler {
 		return h
 	}
 
-	return &LogstashHandler{
-		option: h.option,
-		attrs:  h.attrs,
-		groups: append(h.groups, name),
+	handler := LogstashHandler{
+		option:  h.option,
+		attrs:   h.attrs,
+		groups:  append(h.groups, name),
+		buf:     make(chan []byte, bufferSize),
+		flushed: make(chan bool),
 	}
+
+	handler.startBufferProcessing()
+
+	return &handler
 }
 
-// Wait for logging goroutines to finish
+// Wait for any buffered messages to be sent to logstash
 func (h *LogstashHandler) Flush() {
-	h.wg.Wait()
+	close(h.buf)
+	<-h.flushed
 }
