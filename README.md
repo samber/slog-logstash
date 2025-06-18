@@ -98,8 +98,8 @@ type Option struct {
 	Converter Converter
 	// optional: custom marshaler
 	Marshaler func(v any) ([]byte, error)
-    // optional: fetch attributes from context
-    AttrFromContext []func(ctx context.Context) []slog.Attr
+	// optional: fetch attributes from context
+	AttrFromContext []func(ctx context.Context) []slog.Attr
 
 	// optional: see slog.HandlerOptions
 	AddSource   bool
