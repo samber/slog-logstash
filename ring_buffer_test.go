@@ -64,7 +64,7 @@ func TestRingBufferWriteBufferDrop(t *testing.T) {
 	testWithTimeout(t, func(t *testing.T) {
 		conn := newMockConn()
 		ringBuffer := NewRingBuffer(conn, 10) // 10 bytes write buffer
-		defer ringBuffer.Close()
+		defer ringBuffer.Close()              //nolint:errcheck
 
 		// Write 3 messages: 4, 4, 4 bytes (total 12 > 10)
 		if _, err := ringBuffer.Write([]byte("aaaa")); err != nil {
@@ -98,7 +98,7 @@ func TestRingBufferWriteAndFlush(t *testing.T) {
 	testWithTimeout(t, func(t *testing.T) {
 		conn := newMockConn()
 		ringBuffer := NewRingBuffer(conn, 100)
-		defer ringBuffer.Close()
+		defer ringBuffer.Close() //nolint:errcheck
 
 		if _, err := ringBuffer.Write([]byte("hello")); err != nil {
 			t.Fatalf("Write failed: %v", err)
@@ -121,7 +121,7 @@ func TestRingBufferFlush(t *testing.T) {
 	testWithTimeout(t, func(t *testing.T) {
 		conn := newMockConn()
 		ringBuffer := NewRingBuffer(conn, 100)
-		defer ringBuffer.Close()
+		defer ringBuffer.Close() //nolint:errcheck
 
 		if _, err := ringBuffer.Write([]byte("foo")); err != nil {
 			t.Fatalf("Write failed: %v", err)
@@ -145,7 +145,7 @@ func TestRingBufferClose(t *testing.T) {
 	testWithTimeout(t, func(t *testing.T) {
 		conn := newMockConn()
 		ringBuffer := NewRingBuffer(conn, 100)
-		defer ringBuffer.Close()
+		defer ringBuffer.Close() //nolint:errcheck
 		if err := ringBuffer.Close(); err != nil {
 			t.Errorf("Close should be idempotent")
 		}
@@ -160,7 +160,7 @@ func TestRingBufferConcurrentWriteFlush(t *testing.T) {
 	testWithTimeout(t, func(t *testing.T) {
 		conn := newMockConn()
 		ringBuffer := NewRingBuffer(conn, 1024)
-		defer ringBuffer.Close()
+		defer ringBuffer.Close() //nolint:errcheck
 
 		var wg sync.WaitGroup
 		errCh := make(chan error, 10)
@@ -198,8 +198,8 @@ func TestRingBufferWriteAfterClose(t *testing.T) {
 	testWithTimeout(t, func(t *testing.T) {
 		conn := newMockConn()
 		ringBuffer := NewRingBuffer(conn, 100)
-		defer ringBuffer.Close()
-		ringBuffer.Close()
+		defer ringBuffer.Close() //nolint:errcheck
+		_ = ringBuffer.Close()   //nolint:errcheck
 		_, err := ringBuffer.Write([]byte("foo"))
 		if err != io.ErrClosedPipe {
 			t.Errorf("Expected io.ErrClosedPipe after close, got %v", err)
@@ -212,7 +212,7 @@ func TestRingBufferWriteTooLarge(t *testing.T) {
 	testWithTimeout(t, func(t *testing.T) {
 		conn := newMockConn()
 		ringBuffer := NewRingBuffer(conn, 10)
-		defer ringBuffer.Close()
+		defer ringBuffer.Close() //nolint:errcheck
 		msg := make([]byte, 20)
 		n, err := ringBuffer.Write(msg)
 		if n != 0 || err != nil {
@@ -226,7 +226,7 @@ func TestRingBufferFlushAfterClose(t *testing.T) {
 	testWithTimeout(t, func(t *testing.T) {
 		conn := newMockConn()
 		ringBuffer := NewRingBuffer(conn, 100)
-		defer ringBuffer.Close()
+		defer ringBuffer.Close() //nolint:errcheck
 		_ = ringBuffer.Flush()
 	})
 }
