@@ -76,15 +76,7 @@ func (rb *RingBuffer) Write(p []byte) (int, error) {
 	if dropIdx > 0 {
 		rb.writeBuffer = rb.writeBuffer[dropIdx:]
 		rb.writeLenBytes = total
-	}
-
-	if dropIdx > 0 {
 		rb.dropped.Add(uint64(dropIdx))
-	}
-
-	if rb.writeLenBytes+msgLen > rb.writeCapBytes {
-		// Still not enough space (buffer was empty but message is too big)
-		return 0, nil
 	}
 
 	rb.writeBuffer = append(rb.writeBuffer, msgCopy)
@@ -96,18 +88,22 @@ func (rb *RingBuffer) Write(p []byte) (int, error) {
 // Close closes the connection and all background goroutines. It is safe to call multiple times.
 // After Close, further Write or Flush calls will return io.ErrClosedPipe.
 func (rb *RingBuffer) Close() error {
+	var err error
 	rb.closeOnce.Do(func() {
 		rb.closing.Store(true)
 		rb.writeCond.Broadcast()
 		rb.wg.Wait()
-		rb.Flush()
+		err = rb.Flush()
+		if err != nil {
+			return
+		}
 		rb.closed.Store(true)
-		rb.Conn.Close()
+		err = rb.Conn.Close()
 		rb.writeMu.Lock()
 		rb.writeBuffer = [][]byte{} // flush
 		rb.writeMu.Unlock()
 	})
-	return nil
+	return err
 }
 
 // writeLoop runs in a goroutine and flushes the write buffer to the connection.
