@@ -121,7 +121,7 @@ func TestReconnectConnRetryLimitedRetryFail(t *testing.T) {
 			return newMockConn(), nil
 		}, 100*time.Millisecond)
 		defer conn.Close() //nolint:errcheck
-		conn.SetMaxRetries(2)
+		conn.SetMaxConnAttempts(2)
 
 		n, err := conn.Write([]byte("aaaa"))
 
@@ -146,7 +146,7 @@ func TestReconnectConnRetryDialerLimitedRetry(t *testing.T) {
 			return newMockConn(), nil
 		}, 100*time.Millisecond)
 		defer conn.Close() //nolint:errcheck
-		conn.SetMaxRetries(3)
+		conn.SetMaxConnAttempts(3)
 
 		n, err := conn.Write([]byte("aaaa"))
 

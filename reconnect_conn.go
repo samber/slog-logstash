@@ -27,8 +27,8 @@ type ReconnectConn struct {
 	mu            sync.Mutex               // Mutex to protect conn
 	writeDeadline time.Time                // Deadline for future write calls
 
-	retryDelay time.Duration // Delay between reconnect attempts
-	maxRetries int           // Maximum number of reconnect attempts, infinite by default
+	retryDelay      time.Duration // Delay between reconnect attempts
+	maxConnAttempts int           // Maximum number of connection attempts, infinite if set to 0 (the default)
 
 	closing   atomic.Bool // Indicates if the connection is closing/closed (atomic)
 	closeOnce sync.Once   // Ensures close is only performed once
@@ -46,13 +46,13 @@ func NewReconnectConn(dialer func() (net.Conn, error), retryDelay time.Duration)
 	}
 }
 
-// SetMaxRetries sets the maximum number of connection attempts.
+// SetMaxConnAttempts sets the maximum number of connection attempts.
 // To make it unlimited use the zero value (the default).
-func (rc *ReconnectConn) SetMaxRetries(maxRetries int) {
+func (rc *ReconnectConn) SetMaxConnAttempts(maxConnAttempts int) {
 	rc.mu.Lock()
 	defer rc.mu.Unlock()
 
-	rc.maxRetries = maxRetries
+	rc.maxConnAttempts = maxConnAttempts
 }
 
 func (rc *ReconnectConn) ensureConn() error {
@@ -61,7 +61,7 @@ func (rc *ReconnectConn) ensureConn() error {
 	}
 
 	var err error
-	for i := 0; rc.maxRetries == 0 || i < rc.maxRetries; i++ {
+	for i := 0; rc.maxConnAttempts == 0 || i < rc.maxConnAttempts; i++ {
 		if rc.closing.Load() {
 			return net.ErrClosed
 		}
