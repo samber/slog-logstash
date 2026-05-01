@@ -4,7 +4,7 @@ go 1.21
 
 require (
 	github.com/samber/go-tcp-pool v1.0.2
-	github.com/samber/slog-common v0.21.0
+	github.com/samber/slog-common v0.22.0
 	go.uber.org/goleak v1.3.0
 )
 
