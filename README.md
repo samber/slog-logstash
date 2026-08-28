@@ -143,6 +143,8 @@ func main() {
     }
 
     logger := slog.New(sloglogstash.Option{Level: slog.LevelDebug, Conn: conn}.NewLogstashHandler())
+	defer sloglogstash.Flush()
+
     logger = logger.
         With("environment", "dev").
         With("release", "v1.0.0")
@@ -235,6 +237,7 @@ func main() {
 			},
 		}.NewLogstashHandler(),
 	)
+	defer sloglogstash.Flush()
 
 	logger.ErrorContext(ctx, "a message")
 }

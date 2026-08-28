@@ -20,6 +20,8 @@ func main() {
 	_ = conn.SetPoolSize(10)
 
 	logger := slog.New(sloglogstash.Option{Level: slog.LevelDebug, Conn: conn}.NewLogstashHandler())
+	defer sloglogstash.Flush()
+
 	logger = logger.With("release", "v1.0.0")
 
 	logger.
